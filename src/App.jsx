@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MoviesList from "./components/MoviesList";
 import "./App.css";
 
@@ -7,7 +7,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchMoviesHandler = async () => {
+  const fetchMoviesHandler = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -33,24 +33,33 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
+
+  console.log("App component");
+  let content = <p>No Movies Available</p>;
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+
+  if (error) {
+    content = <p>{error}</p>;
+  }
+
+  if (loading) {
+    content = <p>Fetching Data Please Wait....</p>;
+  }
 
   return (
     <>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
-      <section>
-        {!loading && movies.length === 0 && !error && (
-          <p>No Movies Available</p>
-        )}
-        {!loading ? (
-          <MoviesList movies={movies} />
-        ) : (
-          <p>Fetching Data Please Wait....</p>
-        )}
-        {!loading && error && <p>{error}</p>}
-      </section>
+      <section>{content}</section>
     </>
   );
 }
