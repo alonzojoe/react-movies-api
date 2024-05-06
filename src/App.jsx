@@ -45,9 +45,10 @@ function App() {
 
   useEffect(() => {
     fetchMoviesHandler();
-  }, [fetchMoviesHandler]);
+  }, []);
 
   const addMoviehandler = async (movie) => {
+    console.log("test");
     try {
       const response = await fetch(
         "https://react-api-63196-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json",
@@ -61,7 +62,7 @@ function App() {
       );
 
       const data = await response.json();
-
+      await fetchMoviesHandler();
       console.log(data);
     } catch (error) {
       setError(error.message);
